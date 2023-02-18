@@ -1,16 +1,14 @@
-var cityModel = require('../models/cities');
-var userSignUpModel = require('../models/userSignUp');
 
 var express = require('express');
 var router = express.Router();
 var request = require('sync-request');
 
+var cityModel = require('../models/cities');
+
 
 if ( cityList === undefined){
 var cityList = [];
 }
-var citySave;
-
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -23,12 +21,14 @@ router.get('/weather', async function(req, res, next) {
 });
 
 router.post('/add-city', async function(req, res, next) {
-
-  var currentWeathData = request("GET",`https://api.openweathermap.org/data/2.5/weather?q=${req.body.name}&lang=fr&units=metric&appid=8c667794050951aa7b364865592a32fe`)
+// verifier que la clez API marche !
+  var currentWeathData = request("GET",`https://api.openweathermap.org/data/2.5/weather?q=London&appid=8c667794050951aa7b364865592a32fe`)
   var currentWeathDataJSON = JSON.parse(currentWeathData.body);
   var notDoubleCity=false;
   var messageError = true;
   var cityList = await cityModel.find();
+
+  console.log(currentWeathDataJSON)
 
 
 
@@ -36,13 +36,11 @@ router.post('/add-city', async function(req, res, next) {
     if( cityList[i].name.toLowerCase() == req.body.name.toLowerCase())
     notDoubleCity= true;
   };
-
-
   if( currentWeathDataJSON.cod !=404){
     messageError=false;
   };
 
-  if(notDoubleCity == false&&currentWeathDataJSON.cod !=404){
+  if(notDoubleCity == false&&messageError == false){
     var newCity = new cityModel({
       name: req.body.name,
       url:"http://openweathermap.org/img/wn/"+currentWeathDataJSON.weather[0].icon+"@2x.png",
@@ -56,8 +54,7 @@ router.post('/add-city', async function(req, res, next) {
   }
 
   cityList = await cityModel.find();
-
-  res.render('weather',{cityList,messageError,citySave});
+  res.render('weather',{cityList, messageError, citySave});
 });
 
 router.get('/delete-city', async function(req, res, next) {
@@ -70,36 +67,5 @@ router.get('/delete-city', async function(req, res, next) {
 });
 
 
-//signup
-router.post('/sign-up', async function(req, res, next){
-req.session.user =[];
 
-
-  var newUser = new userSignUpModel({
-    username: req.body.usernameFromFront,
-    email: req.body.emailFromFront,
-    password: req.body.passwordFromFront,
-  });
-
-  var newUserSave = await newUser.save();
-  req.session.user = {
-    Username: newUserSave.username,
-    sessionId: newUserSave._id
-  };
-
-  res.redirect('/weather');
-});
-
-router.post('/sign-in', async function(req, res, next){
-  seachUser = await userSignUpModel.findOne({email: req.body.emailFromFront, password: req.body.passwordFromFront});
-  if (seachUser != null){
-    req.session.user = {
-      username: req.body.usernameFromFront,
-      sessionId: seachUser._id
-    };
-  res.redirect('/weather');
-  } else {
-      res.redirect('/');
-    }
-});
 module.exports = router;
