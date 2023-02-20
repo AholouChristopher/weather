@@ -5,7 +5,7 @@ var option = {
   useUnifiedTopology: true
 }
 
-mongoose.connect('mongodb+srv://lycris:loulou@weatherapp.ns7ol.mongodb.net/?retryWrites=true&w=majority',
+mongoose.connect('mongodb+srv://lycris:<password>@weatherapp.ns7ol.mongodb.net/?retryWrites=true&w=majority',
   option,
   function(error){
     if (error) {
