@@ -15,6 +15,16 @@ router.get('/', function(req, res, next) {
   res.render('index');
 });
 
+router.get('/logout', function(req, res, next){
+  req.session.destroy((err) => {
+    if (err) {
+      console.error(err);
+    } else {
+      res.redirect('/');
+    }
+  });
+});
+
 router.get('/weather', async function(req, res, next) {
   cityList = await cityModel.find();
   res.render('weather',{cityList,messageError:false});
@@ -22,7 +32,7 @@ router.get('/weather', async function(req, res, next) {
 
 router.post('/add-city', async function(req, res, next) {
 // verifier que la clez API marche !
-  var currentWeathData = request("GET",`https://api.openweathermap.org/data/2.5/weather?q=London&appid=8c667794050951aa7b364865592a32fe`)
+  var currentWeathData = request("GET",`https://api.openweathermap.org/data/2.5/weather?q=${req.body.name},fr&appid=8c667794050951aa7b364865592a32fe`)
   var currentWeathDataJSON = JSON.parse(currentWeathData.body);
   var notDoubleCity=false;
   var messageError = true;

@@ -19,7 +19,12 @@
     <!-- HEADER -->
     <nav class=" header navbar navbar-light bg-dark">
         Weather App
-       <a class="logout" href="./login.html">Deconnexion</a>
+        <form action="/logout" method="GET">
+            <div class="input-group-append">
+              <button class="btn btn-warning logout" type="submit">Deconnexion</button>
+            </div>
+          </div>
+        </form>
    </nav>
 
 <!--btn-outline-secondary-->
@@ -62,8 +67,8 @@
               <div>
                 <span class="badge badge-pill"><%=cityList[i].description%></span>
                 <img src="<%= cityList[i].url %>">
-                <span class="badge badge-warning badge-pill"><%=cityList[i].tmpMax%>°C</span>
-                <span class="badge badge-secondary badge-pill"><%=cityList[i].tmpMin%>°C</span>
+                <span class="badge badge-warning badge-pill"><%=Math.round(cityList[i].tmpMax - 273)%>°C</span>
+                <span class="badge badge-secondary badge-pill"><%=Math.round(cityList[i].tmpMin - 273)%>°C</span>
               </div>
               <a href="/delete-city?id=<%=cityList[i].id%>"><i class="far fa-times-circle crossCercle" ></i></a>
             </li>
